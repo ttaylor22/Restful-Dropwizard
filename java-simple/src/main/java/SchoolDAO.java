@@ -3,6 +3,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import javax.ws.rs.core.Response;
+
 import org.jdbi.v3.core.Handle;
 
 
@@ -25,7 +28,6 @@ public class SchoolDAO {
 	static final String DELETE_ONE = "DELETE FROM levelsgrail where school_id = :school_id AND level_name = :level_name";
 
 	List<School> getSchools() {
-		
 		return handle.createQuery(SELECT_ALL)
 				.reduceResultSet(new HashMap<Long, School>(), (acc, resultSet, ctx) -> {
 					long schoolId = resultSet.getLong("s_id");

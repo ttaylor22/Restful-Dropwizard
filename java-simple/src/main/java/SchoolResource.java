@@ -9,6 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import io.dropwizard.auth.Auth;
 import java.util.List;
@@ -20,20 +21,12 @@ import java.util.Optional;
 @Path("schools")
 public class SchoolResource {
 	private SchoolDAO dao;
-	//private School school;
-	//ptivate 
 	
 	public SchoolResource(SchoolDAO dao) {
 		this.dao = dao;
 	}
 	
-	//public SchoolResource(School school) {
-	//	this.school = school;
-	//}
 	
-	//public SchoolResource(Level level) {
-	//	this.level = level;
-	//}
 	@GET
 	public List<School> getSchools(@Auth User user) {
 		 return dao.getSchools();
@@ -59,13 +52,23 @@ public class SchoolResource {
 	
 	@POST
 	@Path("{school_id}/levels")
-	public Optional<School> postSchool_levels(@PathParam("school_id") Long school_id, Level level, @Auth User user) {
-		return dao.insertLevel(school_id, level);
+	public Response postSchool_levels(@PathParam("school_id") Long school_id, Level level, @Auth User user) {
+		for(Level l : dao.getLevels(school_id)) {
+			if(l.getLevel_name().toUpperCase().equals(level.getLevel_name().toUpperCase())) {
+				return Response.status(409).entity(dao.getSchool(school_id)).build();
+			}
+		}
+		return Response.status(201).entity(dao.insertLevel(school_id, level)).build();
 	}
 	
 	@DELETE
 	@Path("{school_id}/levels")
-	public Optional<School> deleteSchool_levels(@PathParam("school_id") Long school_id, Level level, @Auth User user) {
-		return dao.deleteLevel(school_id, level);
+	public Response deleteSchool_levels(@PathParam("school_id") Long school_id, Level level, @Auth User user) {
+		for(Level l : dao.getLevels(school_id)) {
+			if(l.getLevel_name().toUpperCase().equals(level.getLevel_name().toUpperCase())) {
+				return Response.status(410).entity(dao.deleteLevel(school_id,level)).build();
+			}
+		}
+		return Response.status(404).entity(dao.getSchool(school_id)).build();
 	}
 }

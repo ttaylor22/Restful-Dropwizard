@@ -18,7 +18,7 @@ public class SchoolsApplication extends Application<SchoolConfiguration> {
 	
 	@Override
     public String getName() {
-        return "hello-world";
+        return "Application";
     }
 
 	    @Override
